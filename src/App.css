@@ -1,0 +1,22 @@
+.App {
+  text-align: center;
+}
+
+#sidebar {
+  background: hsl(0, 67%, 70%);
+  border-right: 1px solid hsl(0, 55%, 50%);
+  box-shadow: 1px 0px 5px rgba(0,0,0,0.3);
+  color: white;
+  height: calc(100vh - 46px);
+  overflow: scroll;
+  position: fixed;
+  width: 25%;
+  z-index: 2;
+}
+li{
+  list-style-type: none;
+
+}
+#sidebar{
+  background-color: lightgray;
+}
