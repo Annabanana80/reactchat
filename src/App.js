@@ -21,12 +21,16 @@ class App extends Component {
     super(props);
 
     this.state ={
-      activeRoom: ""
+      activeRoom: "",
+      user: ""
     }
   }
 
   setActiveRoom(room){
     this.setState({activeRoom: room});
+  }
+  setUser(user){
+    this.setState({user: user});
   }
   render() {
     return (
@@ -38,13 +42,21 @@ class App extends Component {
               firebase={firebase}
               activeRoom = {this.state.activeRoom}
               setActiveRoom={ (room) => this.setActiveRoom(room)}
+              user = {this.state.user}
               />
           </aside>
           <div id="main">
             <MessageList 
               firebase={firebase}
               activeRoom = {this.state.activeRoom}
+              user = {this.state.user}
               />
+          </div>
+          <div>
+            <User
+              firebase={ firebase }
+              user={ this.state.user }
+              setUser={ (user) => this.setUser(user) }/>
           </div>
 
       </div>
