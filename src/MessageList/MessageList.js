@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
 
 class MessageList extends Component {
   constructor(props) {
@@ -8,11 +10,13 @@ class MessageList extends Component {
       messages: [],
       newMessage: "",
       isEditing: false,
+      showEmojis: false,
       messageUpdating: "",
       editMessage: ""
     };
 
     this.messagesRef = this.props.firebase.database().ref('messages');
+    this.showEmojis = this.showEmojis.bind(this);
   }
 
   componentDidMount() {
@@ -25,6 +29,21 @@ class MessageList extends Component {
 
   handleChange(e) {
     this.setState({ newMessage: e.target.value })
+  }
+
+  showEmojis(e){
+    this.setState({
+      showEmojis: true
+    }, ()=>document.addEventListener('click', this.closeMenu))
+  }
+
+  closeMenu = (e) => {
+    console.log(this.emojiPicker)
+    if (this.emojiPicker !== null && !this.emojiPicker.contains(e.target)) {
+      this.setState({
+        showEmojis: false
+      }, () => document.removeEventListener('click', this.closeMenu))
+    }
   }
 
   onEnterPress(e) {
@@ -87,6 +106,16 @@ class MessageList extends Component {
 
     this.messagesRef.child(messageKey).remove();
   }
+   addEmoji = (e) => {
+    console.log(e.unified)
+    let sym = e.unified.split('-')
+    let codesArray = []
+    sym.forEach(el => codesArray.push('0x' + el))
+    let emojiPic = String.fromCodePoint(...codesArray)
+    this.setState({
+      newMessage: this.state.newMessage + emojiPic
+    })
+  }
 
   render() {
     return (
@@ -121,17 +150,30 @@ class MessageList extends Component {
             ))
           }
         </section>
-        <form id="create-new-message" onSubmit={ (e) => this.sendMessage(e) }>
-          <textarea
-          cols="100"
-          row="1"
-          onChange={ (e) => this.handleChange(e) }
-          onKeyDown={ (e) => this.onEnterPress(e) }
-          value={ this.state.newMessage }
-          placeholder="New message text here..."></textarea>
-          <p><input type="submit" value="Send"/></p>
-        </form>
+        <section>
+          <form id="create-new-message" onSubmit={ (e) => this.sendMessage(e) }>
+            <textarea
+            cols="100"
+            row="1"
+            onChange={ (e) => this.handleChange(e) }
+            onKeyDown={ (e) => this.onEnterPress(e) }
+            value={ this.state.newMessage }
+            placeholder="New message text here..."></textarea>
+            <p><input type="submit" value="Send"/></p>
+            
+          {
+            this.state.showEmojis ?
+              <span ref={el => (this.emojiPicker = el)}>
+                <Picker onSelect={this.addEmoji} />
+              </span>
+            :
+              <p onClick={this.showEmojis} >
+                {String.fromCodePoint(0x1f60a)}
+              </p>
+          }
+          </form>
       </section>
+    </section>
     )
   }
 }
